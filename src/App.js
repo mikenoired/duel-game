@@ -2,9 +2,23 @@ import { useCallback, useEffect, useRef } from 'react';
 import './App.css';
 
 function App() {
-  const canvasRef = useRef(null)
+  const canvasRef = useRef(null);
+
+  const getMousePos = (can, e) => {
+    const rect = can.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+  }
 
   const draw = useCallback((ctx, can) => {
+    // Cursor pos const
+    const cursor = {
+      x: 0,
+      y: 0,
+    }
+
     const players = [
       { x: 50, y: 20, radius: 20, color: 'red', dy: 1 },
       { x: 450, y: 20, radius: 20, color: 'blue', dy: 1 },
@@ -20,7 +34,6 @@ function App() {
       })
     }
 
-    // Update the circle positions
     const updatePlayers = () => {
       players.forEach((circle) => {
         circle.y += circle.dy;
@@ -30,6 +43,13 @@ function App() {
         }
       });
     }
+
+    const onMouseMove = (event) => {
+      cursor.x = getMousePos(can, event).x
+      cursor.y = getMousePos(can, event).y
+    }
+
+    can.addEventListener('mousemove', onMouseMove)
 
     drawPlayers();
 
