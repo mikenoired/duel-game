@@ -1,1 +1,12 @@
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100dvw;
+  height: 100dvh;
+}
 
+canvas {
+  border: 1px solid black;
+  border-radius: 8px;
+}
