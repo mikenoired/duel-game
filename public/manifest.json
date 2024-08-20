@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Duel Game",
+  "name": "Test duel game for job test",
   "icons": [
     {
       "src": "favicon.ico",
