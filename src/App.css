@@ -1,6 +1,8 @@
 .App {
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  gap: 1rem;
   align-items: center;
   width: 100dvw;
   height: 100dvh;
@@ -9,4 +11,22 @@
 canvas {
   border: 1px solid black;
   border-radius: 8px;
+}
+
+.rangeControls {
+  display: flex;
+  gap: 1rem;
+}
+
+.rangeControls div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+label {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
 }
