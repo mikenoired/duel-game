@@ -13,7 +13,6 @@ function App() {
   }
 
   const draw = useCallback((ctx, can) => {
-    // Cursor pos const
     const cursor = {
       x: 0,
       y: 0,
@@ -21,7 +20,7 @@ function App() {
 
     const players = [
       { x: 50, y: 20, radius: 20, color: 'red', dy: 1 },
-      { x: 450, y: 20, radius: 20, color: 'blue', dy: 1 },
+      { x: 450, y: 480, radius: 20, color: 'blue', dy: 1 },
     ]
 
     const drawPlayers = () => {
@@ -39,6 +38,11 @@ function App() {
         circle.y += circle.dy;
 
         if (circle.y < 20 || circle.y > can.height - circle.radius) {
+          circle.dy = -circle.dy;
+        }
+
+        const isPlayerOnCursor = Math.sqrt((circle.x - cursor.x) ** 2 + (circle.y - cursor.y) ** 2) <= circle.radius;
+        if (isPlayerOnCursor) {
           circle.dy = -circle.dy;
         }
       });
