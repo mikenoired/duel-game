@@ -36,10 +36,10 @@ const App = () => {
 
       const updatePlayers = () => {
         players.forEach((player) => {
-          player.y += player.dy * player.speed;
+          player.y += player.dy;
 
           if (player.y < 20 || player.y > can.height - player.radius) {
-            player.dy = -player.dy * player.speed;
+            player.dy = -player.dy;
           }
 
           if (
@@ -48,7 +48,7 @@ const App = () => {
                 (player.y - cursorRef.current.y) ** 2,
             ) <= player.radius
           ) {
-            player.dy = -player.dy * player.speed;
+            player.dy = -player.dy;
           }
         });
       };
@@ -89,7 +89,18 @@ const App = () => {
           </label>
           <label htmlFor="player1_bulspeed">
             Player speed:
-            <input value={players[0].speed} type="range" min={1} max={10} />
+            <input
+              defaultValue={players[0].dy}
+              onChange={(e) => {
+                players[0].dy = parseInt(
+                  players[0].dy < 0 ? -e.target.value : e.target.value,
+                  10,
+                );
+              }}
+              type="range"
+              min={1}
+              max={10}
+            />
           </label>
         </div>
         <div>
@@ -100,7 +111,18 @@ const App = () => {
           </label>
           <label htmlFor="player2_bulspeed">
             Player speed:
-            <input value={players[1].speed} type="range" min={1} max={10} />
+            <input
+              type="range"
+              defaultValue={players[1].dy}
+              onChange={(e) => {
+                players[1].dy = parseInt(
+                  players[1].dy < 0 ? -e.target.value : e.target.value,
+                  10,
+                );
+              }}
+              min={1}
+              max={10}
+            />
           </label>
         </div>
       </div>
