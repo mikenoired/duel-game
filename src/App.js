@@ -8,6 +8,8 @@ const App = () => {
     1: 0,
     2: 0,
   });
+  const [bulletSetting, setBulletSetting] = useState(1);
+  const [pause, setPause] = useState(false);
   const players = useMemo(
     () => [
       {
@@ -19,6 +21,7 @@ const App = () => {
         dy: 3,
         bullets: [],
         bulletSpeed: 5,
+        bulletColor: "#000000",
       },
       {
         id: 2,
@@ -29,6 +32,7 @@ const App = () => {
         dy: 3,
         bullets: [],
         bulletSpeed: 5,
+        bulletColor: "#000000",
       },
     ],
     [],
@@ -49,10 +53,10 @@ const App = () => {
 
       const drawPlayers = () => {
         ctx.clearRect(0, 0, can.width, can.height);
-        return players.forEach((circle) => {
+        return players.forEach((player) => {
           ctx.beginPath();
-          ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
-          ctx.fillStyle = circle.color;
+          ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI);
+          ctx.fillStyle = player.color;
           ctx.fill();
         });
       };
@@ -76,13 +80,31 @@ const App = () => {
         });
       };
 
+      const handleCanvasClick = (event) => {
+        const rect = can.getBoundingClientRect();
+        const clickX = event.clientX - rect.left;
+        const clickY = event.clientY - rect.top;
+
+        players.forEach((player) => {
+          const distance = Math.sqrt(
+            (player.x - clickX) ** 2 + (player.y - clickY) ** 2,
+          );
+          if (distance <= player.radius) {
+            setBulletSetting(player.id);
+            setPause(true);
+          }
+        });
+      };
+
+      can.addEventListener("click", handleCanvasClick);
+
       const drawBullets = () => {
         players.forEach((player) => {
           player.bullets.push({
             x: player.x,
             y: player.y,
             radius: 5,
-            color: "black",
+            color: player.bulletColor,
           });
         });
       };
@@ -130,10 +152,21 @@ const App = () => {
           player.bullets.forEach((bullet) => {
             ctx.beginPath();
             ctx.arc(bullet.x, bullet.y, 5, 0, 2 * Math.PI);
-            ctx.fillStyle = "black";
+            ctx.fillStyle = player.bulletColor;
             ctx.fill();
           });
         });
+      };
+
+      const pauseAnimation = () => {
+        window.cancelAnimationFrame(requestId);
+        if (bulletIntervalId) {
+          clearInterval(bulletIntervalId);
+        }
+      };
+
+      const resumeAnimation = () => {
+        animate();
       };
 
       can.addEventListener("mousemove", onMouseMove);
@@ -151,11 +184,17 @@ const App = () => {
         bulletIntervalId = setInterval(drawBullets, 1000);
         requestId = window.requestAnimationFrame(animate);
       };
-      animate();
+
+      if (pause) {
+        pauseAnimation();
+      } else {
+        resumeAnimation();
+      }
 
       return () => window.cancelAnimationFrame(requestId);
     },
-    [cursorRef, players, getMousePos],
+
+    [cursorRef, players, getMousePos, pause],
   );
 
   useEffect(() => {
@@ -167,6 +206,26 @@ const App = () => {
 
   return (
     <div className="App">
+      {pause && (
+        <div className="modal">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              players[bulletSetting - 1].bulletColor = e.target.color.value;
+              setPause(false);
+            }}
+          >
+            <span>Change player color</span>
+            <input type="text" hidden name="player" value={bulletSetting} />
+            <input
+              defaultValue={players[bulletSetting - 1].bulletColor}
+              name="color"
+              type="color"
+            />
+            <button type="submit">Apply</button>
+          </form>
+        </div>
+      )}
       <canvas ref={canvasRef} id="canvas" width={500} height={500} />
       <div className="rangeControls">
         <div>
